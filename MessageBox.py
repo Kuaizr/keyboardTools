@@ -7,32 +7,25 @@ from qt_material import apply_stylesheet
 class MessageBox(QWidget):#继承QMainWindow类,继承就是把QMainWindow类的所有方法和变量继承过来。
     def __init__(self):#创建子类__init__方法
         super().__init__()
-        self.ui()
-        self.animationbegin = None
+        self.desktop = QApplication.desktop()
+#        self.animationbegin = QPropertyAnimation(self, b'geometry')
+#        self.animationbegin.setDuration(2000)
+#        self.animationbegin.setStartValue(QRect(-300,0,300,120))
+#        self.animationbegin.setEndValue(QRect(0,0,300,120))
+#        self.animationbegin.start()
         self.animationend = None
+        self.ui()
     def ui(self):
-        #设置窗口
-        # self.setWindowTitle('Test')#窗口标题
-        # self.resize(230,100)#窗口大小
+        self.resize(300,120)#窗口大小
         self.setFixedSize(self.width(),self.height())#设置窗口大小不可变
         self.setWindowFlags(Qt.FramelessWindowHint)
     
-    def resizeEvent(self, event):
-        if self.animationend is None:
-            self.animationend = QPropertyAnimation(self,)
-            self.animationend.setDuration(1000)
-            self.animationend.setStartValue(1)
-            self.animationend.setEndValue(0)
-            self.animationend.finished.connect(self.close)
-            self.animationend.start()
-            event.ignore()
-    
     def closeEvent(self, event):
         if self.animationend is None:
-            self.animationend = QPropertyAnimation(self, b'windowOpacity')
-            self.animationend.setDuration(1000)
-            self.animationend.setStartValue(1)
-            self.animationend.setEndValue(0)
+            self.animationend = QPropertyAnimation(self, b'geometry')
+            self.animationend.setDuration(600)
+            self.animationend.setStartValue(QRect(0,27,300,120))
+            self.animationend.setEndValue(QRect(-300,27,300,120))
             self.animationend.finished.connect(self.close)
             self.animationend.start()
             event.ignore()
