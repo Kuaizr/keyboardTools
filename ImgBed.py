@@ -29,8 +29,8 @@ class ImageBed:
         url = self.host + "/api/admin/login"
 
         data = {
-            "username": "kuaizhirui",
-            "password": "Kzr100312",
+            "username": "xxxxxxx",
+            "password": "xxxxxxx",
         }
         result = requests.post(url, json=data, headers=headers)
         return json.loads(result.text)['data']['access_token']
