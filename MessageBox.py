@@ -13,9 +13,15 @@ class MessageBox(QWidget):#继承QMainWindow类,继承就是把QMainWindow类的
 #        self.animationbegin.setStartValue(QRect(-300,0,300,120))
 #        self.animationbegin.setEndValue(QRect(0,0,300,120))
 #        self.animationbegin.start()
+
         self.animationend = None
         self.ui()
     def ui(self):
+        self.label =QLabel("success!\n![xxxxxxx](https://sssssssssssssssss)",self)
+        self.label.setGeometry(QRect(20,30,260,80))
+        font = QFont()
+        font.setPointSize(23)
+        self.label.setFont(font)
         self.resize(300,120)#窗口大小
         self.setFixedSize(self.width(),self.height())#设置窗口大小不可变
         self.setWindowFlags(Qt.FramelessWindowHint)

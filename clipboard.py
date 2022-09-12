@@ -1,24 +1,14 @@
-from PIL import Image, ImageGrab
-import io
-import win32con,time
-from win32clipboard import GetClipboardData, OpenClipboard, CloseClipboard, EmptyClipboard,SetClipboardData
-
-# 读取剪贴板的数据
+import io,time,sys
+from PIL import Image
+import subprocess
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtGui import QGuiApplication
 def get_clipboard():
-    OpenClipboard()
-    d = GetClipboardData(win32con.CF_TEXT)
-    CloseClipboard()
-    return d.decode('GBK')
+    return subprocess.check_output(['xsel','-o','-b']).decode("utf-8")
 
-#写入剪贴板数据
-def set_clipboard(astr):
-    OpenClipboard()
-    EmptyClipboard()
-    #可以sleep一下，防止操作过快报错
-    time.sleep(1)
-    SetClipboardData(win32con.CF_UNICODETEXT, astr)
-    CloseClipboard()
-
+def set_clipboard(str):
+    res = subprocess.run("echo "+str+" | xsel -i -b",shell=True)
+    return res.returncode
 
 def image2byte(image):
     '''
@@ -34,17 +24,19 @@ def image2byte(image):
     return image_bytes
 
 def getClipBoardImg():
-    im = ImageGrab.grabclipboard()
-    if isinstance(im, Image.Image):
-        # print("Image: size : %s, mode: %s",im.size, im.mode)
-        # im.save("C:\\Users\\15973\\Desktop\\grab_grabclipboard.png")
-        return image2byte(im)
+    app = QGuiApplication(sys.argv)
+    time.sleep(1)
+    cb = QApplication.clipboard()
+    if cb.mimeData().hasImage():
+        qt_img = cb.image()
+        pil_img = Image.fromqimage(qt_img)  # 转换为PIL图像
+        return image2byte(pil_img)
     else:
         return "no img need to upload"
-
-
-# cstr='剪贴板'
-# #写入
-# set_clipboard(cstr)
-# #读取并输出
-# print(get_clipboard())
+print(getClipBoardImg())
+#print(get_clipboard())
+#cstr='剪贴板'
+#写入
+#print(set_clipboard(cstr))
+#读取并输出
+#print(get_clipboard())
