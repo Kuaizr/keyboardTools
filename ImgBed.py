@@ -29,8 +29,8 @@ class ImageBed:
         url = self.host + "/api/admin/login"
 
         data = {
-            "username": "xxxxxxx",
-            "password": "xxxxxxx",
+            "username": "kuaizhirui",
+            "password": "Kzr100312",
         }
         result = requests.post(url, json=data, headers=headers)
         return json.loads(result.text)['data']['access_token']
@@ -47,7 +47,7 @@ class ImageBed:
             'Accept': 'application/json, text/plain, */*',
             'Accept-Encoding': 'gzip, deflate',
             'Accept-Language': 'zh-CN,zh;q=0.9',
-            'Admin-Authorization': "4cd4abb5f1e747ec82c1e83da8a409e4",
+            'Admin-Authorization': self.admin_token,
             'Cache-Control': 'no-cache',
             'Connection': 'keep-alive',
             'Cookie': 'JSESSIONID=node0buyjqr31uy00x3iwid5x9zri179.node0',
@@ -75,7 +75,7 @@ class ImageBed:
                 'Accept': 'application/json, text/plain, */*',
                 'Accept-Encoding': 'gzip, deflate',
                 'Accept-Language': 'zh-CN,zh;q=0.9',
-                'Admin-Authorization': '4cd4abb5f1e747ec82c1e83da8a409e4',
+                'Admin-Authorization': self.admin_token,
                 'Cache-Control': 'no-cache',
                 'Connection': 'keep-alive',
                 'Content-Length': '20036',
@@ -99,9 +99,3 @@ class ImageBed:
         
     def markdownUrl(self,filename,path):
         return "!["+filename+"](" + self.host + path + ")"
-
-
-if __name__ == '__main__':
-    bed = ImageBed()
-    print(bed.pushimg())
-
