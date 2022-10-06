@@ -2,39 +2,105 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-from qt_material import apply_stylesheet
+import time
+from ImgBed import ImageBed
+from clipboard import set_clipboard, get_clipboard
+import keyboard
+from youdao import youdao
  
-class MessageBox(QWidget):#继承QMainWindow类,继承就是把QMainWindow类的所有方法和变量继承过来。
-    def __init__(self):#创建子类__init__方法
+class MessageBox(QWidget):
+    def __init__(self):
         super().__init__()
-        self.desktop = QApplication.desktop()
-#        self.animationbegin = QPropertyAnimation(self, b'geometry')
-#        self.animationbegin.setDuration(2000)
-#        self.animationbegin.setStartValue(QRect(-300,0,300,120))
-#        self.animationbegin.setEndValue(QRect(0,0,300,120))
-#        self.animationbegin.start()
-        self.animationend = None
-        self.ui()
-    def ui(self):
-        self.resize(300,120)#窗口大小
-        self.setFixedSize(self.width(),self.height())#设置窗口大小不可变
-        self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setWindowFlags(Qt.WindowStaysOnTopHint)
+        # self.setWindowFlags(Qt.Window | Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
+        self.setWindowFlags(Qt.FramelessWindowHint) # 无边框
+        self.setAttribute(Qt.WA_TranslucentBackground) # 全透明
+        
+        self.labeltitle = QLabel(self)
+        self.label = QLabel(self)
+        self.labelinfo = QLabel(self)
+
+        self.labeltitle.setIndent(2)
+        self.labeltitle.setAlignment(Qt.AlignLeft)
+        self.label.setAlignment(Qt.AlignCenter)
+        self.labelinfo.setAlignment(Qt.AlignCenter)
+
+        self.vbox = QVBoxLayout()
+        self.vbox.addWidget(self.labeltitle)
+        self.vbox.addWidget(self.label)
+        self.vbox.addWidget(self.labelinfo)
+
+        self.setLayout(self.vbox)
+        self.keyboard = WorkThread(self)
+        self.keyboard.signal.connect(self.getemit)
+        self.keyboard.start()
+
+    def getemit(self,temp):
+        self.setInfo(temp[0],temp[1])
     
-    def closeEvent(self, event):
-        if self.animationend is None:
-            self.animationend = QPropertyAnimation(self, b'geometry')
-            self.animationend.setDuration(600)
-            self.animationend.setStartValue(QRect(0,27,300,120))
-            self.animationend.setEndValue(QRect(-300,27,300,120))
-            self.animationend.finished.connect(self.close)
-            self.animationend.start()
-            event.ignore()
-#主程序
+    def setInfo(self,title,info):
+        self.labeltitle.setText("<font color=\"#56adbc\" size = \"24\">" + title + "</font>")
+        self.label.setText("<font color=\"#56adbc\">-----------------------------------------</font>")
+        self.labelinfo.setText("<font color=\"#56adbc\" size = \"18\">" + info + "</font>")
+        # self.setFocusPolicy()
+        QTimer.singleShot(3000, self.cleanInfo)
+    
+    def cleanInfo(self):
+        self.labeltitle.setText("")
+        self.label.setText("")
+        self.labelinfo.setText("")
+
+class WorkThread(QThread):
+    signal = pyqtSignal(list)
+    def __init__(self,parent):
+        super().__init__()
+        self.parent = parent
+        self.mark ={'value': 0}
+        self.imgbed = ImageBed()
+    def run(self):
+        keyboard.add_hotkey('ctrl+alt', self.uploadimg ,suppress = False)
+        keyboard.add_hotkey('ctrl+c', self.timimg,suppress = False)
+        keyboard.wait()
+
+
+    def uploadimg(self):
+        result = self.imgbed.pushimg()
+        if result == "no img need to upload":
+            temp = ["failed",result]
+            self.signal.emit(temp)
+        else:
+            temp = ["success!",result]
+            self.signal.emit(temp)
+            set_clipboard(result)
+
+    def timimg(self):
+        if self.mark['value'] == 0:
+            self.mark['value'] = time.time() * 1000
+        else:
+            marktime = int(time.time() * 1000 - self.mark['value'])
+            if marktime <= 500:
+                self.mark['value'] = 0
+                self.fanyi()
+            else:
+                self.mark['value'] = 0
+                self.timimg(self.mark)
+
+    def fanyi(self):
+        word = get_clipboard()
+        result = youdao(word)
+        if result == "something wrong":
+            temp = ["failed",result]
+            self.signal.emit(temp)
+        else:
+            temp = ["success!",result]
+            self.signal.emit(temp)
+
+
+
 if __name__ == '__main__':
     application=QApplication(sys.argv)#窗口通讯
-    apply_stylesheet(application, theme='dark_teal.xml')
     root=MessageBox()#创建对象
     root.resize(230,100)
     root.show()#展示窗口
-    QTimer.singleShot(3000, root.close)
+    root.setInfo("1","444444444444444444444")
     sys.exit(application.exec_())
