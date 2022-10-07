@@ -24,6 +24,8 @@ class MessageBox(QWidget):
         self.labeltitle.setAlignment(Qt.AlignLeft)
         self.label.setAlignment(Qt.AlignCenter)
         self.labelinfo.setAlignment(Qt.AlignCenter)
+        self.labelinfo.setWordWrap(True)
+        self.labelinfo.adjustSize()
 
         self.vbox = QVBoxLayout()
         self.vbox.addWidget(self.labeltitle)
@@ -87,13 +89,18 @@ class WorkThread(QThread):
 
     def fanyi(self):
         word = get_clipboard()
-        result = youdao(word)
-        if result == "something wrong":
-            temp = ["failed",result]
-            self.signal.emit(temp)
+        if word:
+            result = youdao(word)
+            if result == "something wrong":
+                temp = ["failed",result]
+                self.signal.emit(temp)
+            else:
+                temp = ["success!",result]
+                self.signal.emit(temp)
         else:
-            temp = ["success!",result]
+            temp = ["failed","编码不支持"]
             self.signal.emit(temp)
+
 
 
 

@@ -1,3 +1,4 @@
+from unittest import result
 from PIL import Image, ImageGrab
 import io
 import win32con,time
@@ -8,7 +9,13 @@ def get_clipboard():
     OpenClipboard()
     d = GetClipboardData(win32con.CF_TEXT)
     CloseClipboard()
-    return d.decode('GBK')
+    try:
+        result = d.decode("GBK")
+        return result
+    except:
+        return None
+
+    
 
 #写入剪贴板数据
 def set_clipboard(astr):
@@ -36,8 +43,6 @@ def image2byte(image):
 def getClipBoardImg():
     im = ImageGrab.grabclipboard()
     if isinstance(im, Image.Image):
-        # print("Image: size : %s, mode: %s",im.size, im.mode)
-        # im.save("C:\\Users\\15973\\Desktop\\grab_grabclipboard.png")
         return image2byte(im)
     else:
         return "no img need to upload"

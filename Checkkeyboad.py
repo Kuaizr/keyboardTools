@@ -27,9 +27,11 @@ def timimg(mark):
 
 def fanyi():
     word = get_clipboard()
-    result = youdao(word)
-    print(result)
-    # showInfo(result)
+    if word:
+        result = youdao(word)
+        print(result)
+    else:
+        print("编码不支持")
 
 
 if __name__ == '__main__':
