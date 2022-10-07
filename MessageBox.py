@@ -11,10 +11,8 @@ from youdao import youdao
 class MessageBox(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowFlags(Qt.WindowStaysOnTopHint)
-        # self.setWindowFlags(Qt.Window | Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
-        self.setWindowFlags(Qt.FramelessWindowHint) # 无边框
-        self.setAttribute(Qt.WA_TranslucentBackground) # 全透明
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
+        self.setAttribute(Qt.WA_TranslucentBackground)
         
         self.labeltitle = QLabel(self)
         self.label = QLabel(self)
@@ -41,9 +39,9 @@ class MessageBox(QWidget):
         self.setInfo(temp[0],temp[1])
     
     def setInfo(self,title,info):
-        self.labeltitle.setText("<font color=\"#56adbc\" size = \"24\">" + title + "</font>")
-        self.label.setText("<font color=\"#56adbc\">-----------------------------------------</font>")
-        self.labelinfo.setText("<font color=\"#56adbc\" size = \"18\">" + info + "</font>")
+        self.labeltitle.setText("<font color=\"#56adbc\" size = \"24\"><b>" + title + "</b></font>")
+        self.label.setText("<font color=\"#56adbc\"><b>-----------------------------------------</b></font>")
+        self.labelinfo.setText("<font color=\"#56adbc\" size = \"18\"><b>" + info + "</b></font>")
         # self.setFocusPolicy()
         QTimer.singleShot(3000, self.cleanInfo)
     
@@ -109,5 +107,4 @@ if __name__ == '__main__':
     root=MessageBox()#创建对象
     root.resize(230,100)
     root.show()#展示窗口
-    root.setInfo("1","444444444444444444444")
     sys.exit(application.exec_())
