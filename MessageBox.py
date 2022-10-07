@@ -83,7 +83,7 @@ class WorkThread(QThread):
                 self.fanyi()
             else:
                 self.mark['value'] = 0
-                self.timimg(self)
+                self.timimg()
 
     def fanyi(self):
         word = get_clipboard()
