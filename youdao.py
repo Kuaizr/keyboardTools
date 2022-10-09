@@ -1,4 +1,3 @@
-from importlib_metadata import re
 import requests, json
 import hashlib, time, random
 
