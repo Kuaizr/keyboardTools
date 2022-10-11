@@ -10,9 +10,19 @@ class GIF(QThread):
         super().__init__()
 
         #ffmpeg 录制视频 -> 调色板 -> gif
-        
+        #ffmpeg 截屏
+
+    def screencut(self,offset_x = 0, offset_y = 0, width = 1920, height = 1080):
+        filename = "E:\\15973\\Pictures\\keyboardtools\\" + str(int(time.time() * 1000))+".png"
+        res = subprocess.call("ffmpeg -f gdigrab -s "+ str(width) +"x"+ str(height) +" -offset_x "+ str(offset_x) +" -offset_y "+ str(offset_y) +" -i desktop -frames:v 1 -draw_mouse 1 " + filename, shell=True)
+        if res:
+            temp = ["failed!","截图失败"]
+        else:
+            temp = ["success!",filename]
+        self.signal.emit(temp)
+
     def begingif(self,offset_x = 0, offset_y = 0, width = 1920, height = 1080, fps = 30, draw_mouse = 0):
-        filename = str(int(time.time() * 1000))+".mp4"
+        filename = "E:\\15973\\Pictures\\keyboardtools\\" + str(int(time.time() * 1000))+".mp4"
         self.process = (
                     ffmpeg
                     .input(filename='desktop', format='gdigrab', framerate=fps, offset_x=offset_x, offset_y=offset_y,draw_mouse=draw_mouse, s=f'{width}x{height}')
@@ -24,17 +34,23 @@ class GIF(QThread):
         self.width = width
 
     def endgif(self):
-        print("-------------------------------------------------------------------------------------------------------------------------")
         self.process.communicate(str.encode("q"))
         self.process.terminate()
-        subprocess.call("ffmpeg -i "+ self.filename +" -vf fps=20,scale="+str(self.width)+":-1:flags=lanczos,palettegen -y "+ self.filename.replace("mp4","png"), shell=True)
-        subprocess.call("ffmpeg -i "+ self.filename +" -i "+ self.filename.replace("mp4","png") +" -lavfi \"fps=15,scale="+str(self.width)+":-1:flags=lanczos[x];[x][1:v]paletteuse\" -y "+ self.filename.replace("mp4","gif"), shell=True)
-        subprocess.call("del "+ self.filename.replace("mp4","png"), shell=True)
-        subprocess.call("del "+ self.filename, shell=True)
+        res1 = subprocess.call("ffmpeg -i "+ self.filename +" -vf fps=20,scale="+str(self.width)+":-1:flags=lanczos,palettegen -y "+ self.filename.replace("mp4","png"), shell=True)
+        res2 = subprocess.call("ffmpeg -i "+ self.filename +" -i "+ self.filename.replace("mp4","png") +" -lavfi \"fps=15,scale="+str(self.width)+":-1:flags=lanczos[x];[x][1:v]paletteuse\" -y "+ self.filename.replace("mp4","gif"), shell=True)
+        res3 = subprocess.call("del "+ self.filename.replace("mp4","png"), shell=True)
+        res4 = subprocess.call("del "+ self.filename, shell=True)
+        if res1 or res2 or res3 or res4:
+            temp = ["failed!","录制GIF失败"]
+        else:
+            temp = ["success!",self.filename.replace("mp4","gif")]
+        self.signal.emit(temp)
 
 # gif1 = GIF()
+# gif1.screencut()
 # gif1.begingif()
 # time.sleep(10)
+# gif1.screencut(100,100,600,600)
 # gif1.endgif()
 # time.sleep(10)
 

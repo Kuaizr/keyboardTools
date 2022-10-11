@@ -1,10 +1,10 @@
-from unittest import result
 from PIL import Image, ImageGrab
+import os
 import io
 import win32con,time
 from win32clipboard import GetClipboardData, OpenClipboard, CloseClipboard, EmptyClipboard,SetClipboardData
 
-# 读取剪贴板的数据
+# 读取剪贴板的文本数据
 def get_clipboard():
     OpenClipboard()
     d = GetClipboardData(win32con.CF_TEXT)
@@ -15,13 +15,10 @@ def get_clipboard():
     except:
         return None
 
-    
-
 #写入剪贴板数据
 def set_clipboard(astr):
     OpenClipboard()
     EmptyClipboard()
-    #可以sleep一下，防止操作过快报错
     time.sleep(1)
     SetClipboardData(win32con.CF_UNICODETEXT, astr)
     CloseClipboard()
@@ -43,13 +40,24 @@ def image2byte(image):
 def getClipBoardImg():
     im = ImageGrab.grabclipboard()
     if isinstance(im, Image.Image):
-        return image2byte(im)
+        return [image2byte(im),'png']
     else:
-        return "no img need to upload"
+        path = get_clipboard().strip()
+        if path.endswith("png"):
+            # 判断文件是否存在
+            if os.path.exists(path):
+                f = open(path,'rb')
+                imgdate = f.read()
+                f.close()
+                return [imgdate,'png']
+            return ["no img need to upload","png"]
+        elif path.endswith("gif"):
+            if os.path.exists(path):
+                f = open(path,'rb')
+                imgdate = f.read()
+                f.close()
+                return [imgdate,'gif']
+            return ["no img need to upload","png"]
+        else:
+            return ["no img need to upload","png"]
 
-
-# cstr='剪贴板'
-# #写入
-# set_clipboard(cstr)
-# #读取并输出
-# print(get_clipboard())

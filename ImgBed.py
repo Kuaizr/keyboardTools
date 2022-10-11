@@ -61,14 +61,14 @@ class ImageBed:
 
     def pushimg(self):
         '''这个函数用来实现单张图片的上传，并得到markdown格式的文件'''
-        filename = str(int(time.time() * 1000))+".png"
         url = self.host + "/api/admin/attachments/upload"
         imgdata = getClipBoardImg()
-        if imgdata == "no img need to upload":
+        filename = str(int(time.time() * 1000))+"."+imgdata[1]
+        if imgdata[0] == "no img need to upload":
             return "no img need to upload"
         m = MultipartEncoder(
             fields = {
-                "file":(filename,imgdata,'image/png')
+                "file":(filename,imgdata[0],'image/'+imgdata[1])
             }
         )
         headers = {
