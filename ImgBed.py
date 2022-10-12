@@ -47,7 +47,7 @@ class ImageBed:
             'Accept': 'application/json, text/plain, */*',
             'Accept-Encoding': 'gzip, deflate',
             'Accept-Language': 'zh-CN,zh;q=0.9',
-            'Admin-Authorization': "4cd4abb5f1e747ec82c1e83da8a409e4",
+            'Admin-Authorization': self.admin_token,
             'Cache-Control': 'no-cache',
             'Connection': 'keep-alive',
             'Cookie': 'JSESSIONID=node0buyjqr31uy00x3iwid5x9zri179.node0',
@@ -61,21 +61,21 @@ class ImageBed:
 
     def pushimg(self):
         '''这个函数用来实现单张图片的上传，并得到markdown格式的文件'''
-        filename = str(int(time.time() * 1000))+".png"
         url = self.host + "/api/admin/attachments/upload"
         imgdata = getClipBoardImg()
-        if imgdata == "no img need to upload":
+        filename = str(int(time.time() * 1000))+"."+imgdata[1]
+        if imgdata[0] == "no img need to upload":
             return "no img need to upload"
         m = MultipartEncoder(
             fields = {
-                "file":(filename,imgdata,'image/png')
+                "file":(filename,imgdata[0],'image/'+imgdata[1])
             }
         )
         headers = {
                 'Accept': 'application/json, text/plain, */*',
                 'Accept-Encoding': 'gzip, deflate',
                 'Accept-Language': 'zh-CN,zh;q=0.9',
-                'Admin-Authorization': '4cd4abb5f1e747ec82c1e83da8a409e4',
+                'Admin-Authorization': self.admin_token,
                 'Cache-Control': 'no-cache',
                 'Connection': 'keep-alive',
                 'Content-Length': '20036',
@@ -99,9 +99,3 @@ class ImageBed:
         
     def markdownUrl(self,filename,path):
         return "!["+filename+"](" + self.host + path + ")"
-
-
-if __name__ == '__main__':
-    bed = ImageBed()
-    print(bed.pushimg())
-
