@@ -1,4 +1,4 @@
-import ffmpeg
+# import ffmpeg
 import time
 import subprocess
 from PyQt5.QtCore import *
@@ -20,24 +20,19 @@ class GIF(QThread):
         else:
             temp = ["success!",filename]
         self.signal.emit(temp)
+        return temp[1]
 
-    def begingif(self,offset_x = 0, offset_y = 0, width = 1920, height = 1080, fps = 30, draw_mouse = 0):
+    def begingif(self,offset_x = 0, offset_y = 0, width = 1920, height = 1080, fps = 15, draw_mouse = 0):
         filename = "E:\\15973\\Pictures\\keyboardtools\\" + str(int(time.time() * 1000))+".mp4"
-        self.process = (
-                    ffmpeg
-                    .input(filename='desktop', format='gdigrab', framerate=fps, offset_x=offset_x, offset_y=offset_y,draw_mouse=draw_mouse, s=f'{width}x{height}')
-                    .output(filename)
-                    .overwrite_output()
-                    .run_async(pipe_stdin=True,pipe_stdout=False)
-        )
+        self.process = subprocess.Popen("ffmpeg -f gdigrab -s "+ str(width) +"x"+ str(height) +" -offset_x "+ str(offset_x) +" -offset_y "+ str(offset_y) +" -i desktop -draw_mouse 1 -framerate 15 " + filename,shell=True, stdin=subprocess.PIPE)
         self.filename = filename
         self.width = width
 
     def endgif(self):
         self.process.communicate(str.encode("q"))
-        self.process.terminate()
-        res1 = subprocess.call("ffmpeg -i "+ self.filename +" -vf fps=20,scale="+str(self.width)+":-1:flags=lanczos,palettegen -y "+ self.filename.replace("mp4","png"), shell=True)
-        res2 = subprocess.call("ffmpeg -i "+ self.filename +" -i "+ self.filename.replace("mp4","png") +" -lavfi \"fps=15,scale="+str(self.width)+":-1:flags=lanczos[x];[x][1:v]paletteuse\" -y "+ self.filename.replace("mp4","gif"), shell=True)
+        self.process.wait()
+        res1 = subprocess.call("ffmpeg -i "+ self.filename +" -vf fps=12,scale="+str(self.width)+":-1:flags=lanczos,palettegen -y "+ self.filename.replace("mp4","png"), shell=True)
+        res2 = subprocess.call("ffmpeg -i "+ self.filename +" -i "+ self.filename.replace("mp4","png") +" -lavfi \"fps=12,scale="+str(self.width)+":-1:flags=lanczos[x];[x][1:v]paletteuse\" -y "+ self.filename.replace("mp4","gif"), shell=True)
         res3 = subprocess.call("del "+ self.filename.replace("mp4","png"), shell=True)
         res4 = subprocess.call("del "+ self.filename, shell=True)
         if res1 or res2 or res3 or res4:
@@ -45,7 +40,14 @@ class GIF(QThread):
         else:
             temp = ["success!",self.filename.replace("mp4","gif")]
         self.signal.emit(temp)
+        return temp[1]
 
+
+
+
+
+
+# 测试截屏和录屏
 # gif1 = GIF()
 # gif1.screencut()
 # gif1.begingif()
@@ -53,7 +55,6 @@ class GIF(QThread):
 # gif1.screencut(100,100,600,600)
 # gif1.endgif()
 # time.sleep(10)
-
 # gif1.begingif(offset_x = 100, offset_y = 100, width = 600, height = 600)
 # time.sleep(10)
 # gif1.endgif()
