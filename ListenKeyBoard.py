@@ -23,6 +23,7 @@ class ListenKeyBoard(QThread):
         super().__init__()
         self.mark ={'value': 0}
         self.imgbed = ImageBed()
+        
     def run(self):
         keyboard.add_hotkey('ctrl+alt', self.uploadimg ,suppress = False)
         keyboard.add_hotkey('ctrl+c', self.timimg,suppress = False)

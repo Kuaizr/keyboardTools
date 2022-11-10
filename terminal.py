@@ -5,8 +5,6 @@ import keyboard
 from youdao import youdao
 from GIF import GIF
 
-
-
 def uploadimg(imgbed):
     result = imgbed.pushimg()
     print(result)
@@ -58,8 +56,6 @@ def escfun(hasGif):
         gif.endgif()
         print("录制中断")
     
-
-
 if __name__ == '__main__':
     mark ={'value': 0}
     hasGif = {'value': False}

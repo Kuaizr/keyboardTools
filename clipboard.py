@@ -1,5 +1,6 @@
 from PIL import Image, ImageGrab
 import os
+import base64
 import io
 import win32con,time
 from win32clipboard import GetClipboardData, OpenClipboard, CloseClipboard, EmptyClipboard,SetClipboardData
@@ -60,4 +61,14 @@ def getClipBoardImg():
             return ["no img need to upload","png"]
         else:
             return ["no img need to upload","png"]
+    
+def getImgLableBybase64(path):
+    pic = ""
+    if os.path.exists(path):
+        f = open(path,'rb')
+        imgdate = f.read()
+        f.close()
+        s = base64.b64encode(imgdate)
+        pic=s.decode('ascii')
+    return "<img src='data:image/png;base64,"+ pic +"'/>"
 
