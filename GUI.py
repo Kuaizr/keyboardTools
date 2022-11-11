@@ -59,9 +59,9 @@ class Main(QWidget):
         self.keyboard.start()
 
     def createTrayIcon(self):
-        self.changeImgType = QAction('图片内嵌:'+str(self.imgbase64), self, triggered = self.changeImgbase64)
-        self.changeUDP = QAction('显示通知:'+str(self.ifMessage), self, triggered = self.changeifMessage)
-        aQuit = QAction('退出(&Q)', self, triggered = QApplication.instance().quit)
+        self.changeImgType = QAction('base64?:'+str(self.imgbase64), self, triggered = self.changeImgbase64)
+        self.changeUDP = QAction('showMessage?:'+str(self.ifMessage), self, triggered = self.changeifMessage)
+        aQuit = QAction('Quit(&Q)', self, triggered = QApplication.instance().quit)
         
         menu = QMenu(self)
         menu.addAction(self.changeImgType)
@@ -75,11 +75,11 @@ class Main(QWidget):
 
     def changeImgbase64(self):
         self.imgbase64 = not self.imgbase64
-        self.changeImgType.setText('图片内嵌:'+str(self.imgbase64))
+        self.changeImgType.setText('base64?:'+str(self.imgbase64))
     
     def changeifMessage(self):
         self.ifMessage = not self.ifMessage
-        self.changeUDP.setText('显示通知:'+str(self.ifMessage))
+        self.changeUDP.setText('showMessage?:'+str(self.ifMessage))
 
     def doesc(self,temp):
         if temp:
