@@ -98,4 +98,4 @@ class ImageBed:
             return self.markdownUrl(filename=filename,path=json.loads(result.text)['data']['path'])
         
     def markdownUrl(self,filename,path):
-        return "!["+filename+"](" + self.host + path + ")"
+        return "!["+filename+"](" + path + ")"

@@ -30,8 +30,16 @@ class ListenKeyBoard(QThread):
         keyboard.add_hotkey('ctrl+shift+[', self.gifbegin,suppress = False)
         keyboard.add_hotkey('ctrl+shift+]', self.gifend,suppress = False)
         keyboard.add_hotkey('ctrl+shift+a', self.screencut,suppress = False)
+        keyboard.add_hotkey('ctrl+shift+s', self.imgFloat,suppress = False)
         keyboard.add_hotkey('esc', self.escfun,suppress = False)
         keyboard.wait()
+    
+    def imgFloat(self):
+        if self.hasScreen == False:
+            pass
+        elif self.hasScreen == True:
+            self.hasScreen = False
+            self.screen.emit("imgfloat")
 
     def escfun(self):
         # 界面杀掉
