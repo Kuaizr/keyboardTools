@@ -7,6 +7,7 @@ import sys
 class ImgFloat(QWidget):
     close = pyqtSignal(str)
     mousepress = False
+    transparent = False
     def __init__(self,x,y,w,h,imgpath):
         super().__init__()
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
@@ -21,10 +22,12 @@ class ImgFloat(QWidget):
         self.minh = int(0.5*h)
         self.tempx = 0
         self.tempy = 0
+        self.opacity = 1
         self.setMouseTracking(True)
         self.setImg()
 
     def setImg(self):
+        self.setWindowOpacity(self.opacity)
         self.setGeometry(QRect(self.x, self.y, self.w, self.h))
         self.img = QLabel(self)
         self.img.setPixmap(QPixmap(self.imgpath))
@@ -37,16 +40,24 @@ class ImgFloat(QWidget):
         angle=event.angleDelta() / 8
         angleY=angle.y() # 竖直滚过的距离
         if angleY > 0:
-            w = int(1.1 * self.w)
-            h = int(1.1 * self.h)
-            self.w = w if w <= self.maxw else self.maxw
-            self.h = h if h <= self.maxh else self.maxh
+            if self.transparent:
+                opacity =  self.opacity + 0.1
+                self.opacity = opacity if opacity <= 1.0 else 1.0
+            else:
+                w = int(1.1 * self.w)
+                h = int(1.1 * self.h)
+                self.w = w if w <= self.maxw else self.maxw
+                self.h = h if h <= self.maxh else self.maxh
             self.setImg()
         else: # 滚轮下滚
-            w = int(0.9 * self.w)
-            h = int(0.9 * self.h)
-            self.w = w if w >= self.minw else self.minw
-            self.h = h if h >= self.minh else self.minh
+            if self.transparent:
+                opacity =  self.opacity - 0.1
+                self.opacity = opacity if opacity >= 0.3 else 0.3
+            else:
+                w = int(0.9 * self.w)
+                h = int(0.9 * self.h)
+                self.w = w if w >= self.minw else self.minw
+                self.h = h if h >= self.minh else self.minh
             self.setImg()
 
     def mousePressEvent(self, event):
@@ -56,6 +67,9 @@ class ImgFloat(QWidget):
             self.tempx = event.x()
             self.tempy = event.y()
         elif key_name == 2:
+            if self.transparent == False:
+                self.transparent = True
+        elif key_name == 4:
             self.close.emit(self.imgpath)
         
 
@@ -71,6 +85,9 @@ class ImgFloat(QWidget):
         key_name = event.button()
         if key_name == 1:
             self.mousepress = False
+        elif key_name == 2:
+            if self.transparent == True:
+                self.transparent = False
 
 # if __name__ == '__main__':
 #     application=QApplication(sys.argv)#窗口通讯
