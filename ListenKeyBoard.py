@@ -24,7 +24,7 @@ class ListenKeyBoard(QThread):
         keyboard.add_hotkey('ctrl+shift+[', self.gifbegin,suppress = False)
         keyboard.add_hotkey('ctrl+shift+]', self.gifend,suppress = False)
         keyboard.add_hotkey('ctrl+shift+a', self.screencut,suppress = False)
-        keyboard.add_hotkey('enter', self.cutorgif,suppress = False)
+        keyboard.add_hotkey('ctrl+shift+/', self.imgFloat,suppress = False)
         keyboard.add_hotkey('esc', self.escfun,suppress = False)
         keyboard.wait()
 
@@ -36,15 +36,12 @@ class ListenKeyBoard(QThread):
             self.hasgif = False
             self.hasScreen = False
 
-
-
-    def cutorgif(self):
-        if self.hasScreen == True and self.hasgif == False:
-            # 进入录屏界面
-            self.hasScreen = False
-            
-        else:
+    def imgFloat(self):
+        if self.hasScreen == False:
             pass
+        elif self.hasScreen == True:
+            self.hasScreen = False
+            self.screen.emit("imgfloat")
 
     def screencut(self):
         if self.hasScreen == False and self.hasgif == False:
@@ -55,10 +52,11 @@ class ListenKeyBoard(QThread):
             self.screen.emit("end")
 
     def gifbegin(self):
-        self.hasScreen = False
-        if self.hasgif == False:
-            self.gif.emit("begin")
-            self.hasgif = True
+        if self.hasScreen:
+            self.hasScreen = False
+            if self.hasgif == False:
+                self.gif.emit("begin")
+                self.hasgif = True
 
     def gifend(self):
         if self.hasgif:

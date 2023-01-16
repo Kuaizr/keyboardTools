@@ -14,9 +14,7 @@ class GIF(QThread):
         #ffmpeg 截屏
 
     def screencut(self,offset_x = 0, offset_y = 0, width = 1920, height = 1080):
-        filename = "/home/
-        kzer/Pictures/screencut/" + str(int(time.time() * 1000))+".png"
-        shell = "ffmpeg -f x11grab -video_size "+ str(width) +"x"+ str(height) +" -i " + self.display + "+"+  str(offset_x) +","+ str(offset_y) +" -frames:v 1 -y " + filename
+        filename = "/home/kzer/Pictures/screencut/" + str(int(time.time() * 1000))+".png"
         res = subprocess.call("ffmpeg -f x11grab -video_size "+ str(width) +"x"+ str(height) +" -i " + self.display + "+"+  str(offset_x) +","+ str(offset_y) +" -frames:v 1 -y " + filename, shell=True)
 
         if res:
@@ -24,6 +22,7 @@ class GIF(QThread):
         else:
             temp = ["success!",filename]
         self.signal.emit(temp)
+        return filename
 
     def begingif(self,offset_x = 0, offset_y = 0, width = 1920, height = 1080, fps = 30, draw_mouse = 0):
         filename = "/home/kzer/wallpaper/pictures/screencut/" + str(int(time.time() * 1000))+".mp4"

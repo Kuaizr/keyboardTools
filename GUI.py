@@ -10,6 +10,7 @@ from GIF import GIF
 from ScreenTemp import ScreenTemp
 from Border import Border
 from UDP import UDP
+from ImgFloat import ImgFloat
  
 class Main(QWidget):
     def __init__(self):
@@ -33,6 +34,7 @@ class Main(QWidget):
         self.gif.signal.connect(self.getemit)
         self.borderlist = []
 
+        self.imgList = dict()
 
         self.sysIcon = QIcon('./icon_normal.png')
         self.badIcon = QIcon('./icon_bad.png')
@@ -89,8 +91,20 @@ class Main(QWidget):
                 position =  self.screenTemp.getPosition()
                 self.screenTemp.close()
                 self.gif.screencut(position[0],position[1],position[2],position[3])
-            
+        elif temp == "imgfloat":
+            if self.isScreenCutBegin == True:
+                self.isScreenCutBegin = False
+                position =  self.screenTemp.getPosition()
+                self.screenTemp.close()
+                path = self.gif.screencut(position[0],position[1],position[2],position[3])
+                self.imgList[path] = ImgFloat(position[0],position[1],position[2],position[3],path)
+                self.imgList[path].show()
+                self.imgList[path].close.connect(self.stopImgFloat)
 
+    def stopImgFloat(self,temp):
+        path = str(temp)
+        del self.imgList[path]
+        
     def getgif(self,temp):
         if temp == "begin":
             if self.isScreenCutBegin and self.isGifBegin == False:
