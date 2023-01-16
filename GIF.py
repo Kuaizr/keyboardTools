@@ -25,8 +25,10 @@ class GIF(QThread):
         return filename
 
     def begingif(self,offset_x = 0, offset_y = 0, width = 1920, height = 1080, fps = 30, draw_mouse = 0):
-        filename = "/home/kzer/wallpaper/pictures/screencut/" + str(int(time.time() * 1000))+".mp4"
-        self.process = subprocess.Popen("ffmpeg -video_size "+ str(width) +"x"+ str(height) +" -framerate 15 -f x11grab -i " + self.display + "+"+ str(offset_x) +","+ str(offset_y)+" "+filename,shell=True, stdin=subprocess.PIPE)
+        filename = "/home/kzer/Pictures/screencut/" + str(int(time.time() * 1000))+".mp4"
+        shell = "ffmpeg -video_size "+ str(width) +"x"+ str(height) +" -framerate 15 -f x11grab -i " + self.display + "+"+ str(offset_x) +","+ str(offset_y)+" -y "+filename
+        print(shell)
+        self.process = subprocess.Popen("ffmpeg -video_size "+ str(width) +"x"+ str(height) +" -framerate 15 -f x11grab -i " + self.display + "+"+ str(offset_x) +","+ str(offset_y)+" -y "+filename,shell=True, stdin=subprocess.PIPE)
         self.filename = filename
         self.width = width
 
@@ -43,14 +45,12 @@ class GIF(QThread):
             temp = ["success!",self.filename.replace("mp4","gif")]
         self.signal.emit(temp)
 
-# if __name__ == "__main__":
-#     gif1 = GIF()
-#     gif1.screencut()
-    # gif1.begingif()
-    # time.sleep(10)
-    #data = input("input q")
-    # gif1.screencut(100,100,600,600)
-    # gif1.endgif()
+if __name__ == "__main__":
+    gif1 = GIF()
+    # gif1.screencut()
+    gif1.begingif()
+    time.sleep(3)
+    gif1.endgif()
     # time.sleep(10)
 
     # gif1.begingif(offset_x = 100, offset_y = 100, width = 600, height = 600)

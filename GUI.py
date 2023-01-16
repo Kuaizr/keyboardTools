@@ -36,8 +36,8 @@ class Main(QWidget):
 
         self.imgList = dict()
 
-        self.sysIcon = QIcon('./icon_normal.png')
-        self.badIcon = QIcon('./icon_bad.png')
+        self.sysIcon = QIcon('/home/kzer/code/keyboardTools/icon_normal.png')
+        self.badIcon = QIcon('/home/kzer/code/keyboardTools/icon_bad.png')
         self.setWindowIcon(self.sysIcon)
         self.createTrayIcon()
 
