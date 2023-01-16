@@ -1,5 +1,4 @@
 import time
-from ImgBed import ImageBed
 from clipboard import get_clipboard
 import keyboard
 from youdao import youdao
@@ -20,9 +19,7 @@ class ListenKeyBoard(QThread):
     def __init__(self):
         super().__init__()
         self.mark ={'value': 0}
-        self.imgbed = ImageBed()
     def run(self):
-        keyboard.add_hotkey('ctrl+alt', self.uploadimg ,suppress = False)
         keyboard.add_hotkey('ctrl+c', self.timimg,suppress = False)
         keyboard.add_hotkey('ctrl+shift+[', self.gifbegin,suppress = False)
         keyboard.add_hotkey('ctrl+shift+]', self.gifend,suppress = False)
@@ -68,14 +65,6 @@ class ListenKeyBoard(QThread):
             self.gif.emit("end")
             self.hasgif = False
 
-    def uploadimg(self):
-        result = self.imgbed.pushimg()
-        if result == "no img need to upload":
-            temp = ["failed",result]
-            self.signal.emit(temp)
-        else:
-            temp = ["success!",result]
-            self.signal.emit(temp)
 
     def timimg(self):
         if self.mark['value'] == 0:

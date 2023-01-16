@@ -5,7 +5,6 @@ from PyQt5.QtGui import *
 import sys
 
 class ScreenTemp(QWidget):
-    # signal = pyqtSignal(list)
     position = [0,0,0,0]
     mousepress = False
     labelmove = False

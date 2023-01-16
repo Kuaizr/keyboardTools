@@ -1,16 +1,9 @@
 import time
-from ImgBed import ImageBed
 from clipboard import set_clipboard, get_clipboard
 import keyboard
 from youdao import youdao
 from GIF import GIF
 
-
-
-def uploadimg(imgbed):
-    result = imgbed.pushimg()
-    print(result)
-    set_clipboard(result)
 
 def timimg(mark):
     if mark['value'] == 0:
@@ -63,12 +56,9 @@ def escfun(hasGif):
 if __name__ == '__main__':
     mark ={'value': 0}
     hasGif = {'value': False}
-    # 初始化ImgBed
-    imgbed = ImageBed()
     # 初始化GIF
     gif = GIF()
 
-    keyboard.add_hotkey('ctrl+alt', uploadimg, args=(imgbed,) ,suppress = False)
     keyboard.add_hotkey('ctrl+c', timimg,args=(mark,),suppress = False)
     keyboard.add_hotkey('ctrl+shift+[', gifbegin, args=(gif,hasGif) ,suppress = False)
     keyboard.add_hotkey('ctrl+shift+]', gifend, args=(gif,hasGif) ,suppress = False)
