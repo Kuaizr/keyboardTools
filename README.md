@@ -4,7 +4,13 @@ python3.7
 
 ### 主要用到的几个库
 
-pip install keyboard request-toolbert pyqt5
+keyboard
+
+pyqt5
+
+whisper
+
+opencc-python-reimplemented
 
 ffmpeg
 

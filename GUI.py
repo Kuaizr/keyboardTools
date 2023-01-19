@@ -11,12 +11,15 @@ from ScreenTemp import ScreenTemp
 from Border import Border
 from UDP import UDP
 from ImgFloat import ImgFloat
+from ScreenInfo import ScreenInfo
  
 class Main(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
         self.setAttribute(Qt.WA_TranslucentBackground)
+
+        self.screenInfo = ScreenInfo()
 
         self.udp = UDP()
         self.ifMessage = True
@@ -138,6 +141,7 @@ class Main(QWidget):
 
     def getemit(self,temp):
         self.udp.sendInfo(bytes(temp[0]+"*-*"+temp[1],'utf-8'))
+        self.screenInfo.showInfo(temp[1])
         if self.ifMessage:
             self.showMessage(temp[0],temp[1])
         if temp[0] == "success!":
@@ -164,6 +168,5 @@ if __name__ == '__main__':
         
     QApplication.setQuitOnLastWindowClosed(False)
     root=Main()#创建对象
-    root.resize(230,100)
     # root.show()#展示窗口
     sys.exit(application.exec_())

@@ -7,7 +7,7 @@ class UDP(QThread):
         super(UDP).__init__()
         self.serverPort=12000
         self.serverSocket=socket(AF_INET,SOCK_DGRAM)
-        self.serverSocket.bind(("192.168.3.47",self.serverPort))
+        self.serverSocket.bind(("192.168.2.6",self.serverPort))
         self.clientAddress = ("192.168.3.32", 12345)
             
         
