@@ -12,6 +12,9 @@ class ScreenInfo(QWidget):
         
         self.setAttribute(Qt.WA_TranslucentBackground)
 
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.hideInfo)
+
         self.desktop =  QApplication.desktop()
         self.setGeometry(0,self.desktop.height() * 0.85,self.desktop.width(),self.desktop.height() * 0.1)
         self.setMouseTracking(True)
@@ -25,9 +28,10 @@ class ScreenInfo(QWidget):
         self.info.show()
     
     def showInfo(self,info):
+        self.timer.stop()
         self.info.setText(info)
         self.show()
-        QTimer.singleShot(3000, self.hideInfo)
+        self.timer.start(3000)
     
     def hideInfo(self):
         self.info.setText("")

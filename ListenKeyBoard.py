@@ -14,6 +14,9 @@ class ListenKeyBoard(QThread):
     screen = pyqtSignal(str)
     hasScreen = False
 
+    hasRecord = False
+    record = pyqtSignal(str)
+
     esc = pyqtSignal(bool)
 
     def __init__(self):
@@ -26,8 +29,19 @@ class ListenKeyBoard(QThread):
         keyboard.add_hotkey('ctrl+shift+]', self.gifend,suppress = False)
         keyboard.add_hotkey('ctrl+shift+a', self.screencut,suppress = False)
         keyboard.add_hotkey('ctrl+shift+/', self.imgFloat,suppress = False)
+        keyboard.add_hotkey('ctrl+shift+t', self.recordfunc,suppress = False)
         keyboard.add_hotkey('esc', self.escfun,suppress = False)
         keyboard.wait()
+    
+    def recordfunc(self):
+        print(1)
+        if self.hasRecord == False:
+            self.hasRecord = True
+            self.record.emit("begin")
+        else:
+            self.hasRecord = False
+            self.record.emit("end")
+
     
     def imgFloat(self):
         if self.hasScreen == False:

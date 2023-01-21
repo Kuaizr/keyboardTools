@@ -12,6 +12,7 @@ from Border import Border
 from UDP import UDP
 from ImgFloat import ImgFloat
 from ScreenInfo import ScreenInfo
+from Translation import Translation
  
 class Main(QWidget):
     def __init__(self):
@@ -20,9 +21,11 @@ class Main(QWidget):
         self.setAttribute(Qt.WA_TranslucentBackground)
 
         self.screenInfo = ScreenInfo()
+        self.translation = Translation()
+        self.translation.text.connect(self.getemit)
 
         self.udp = UDP()
-        self.ifMessage = True
+        self.ifMessage = False
         self.imgbase64 = False
 
         self.keyboard = ListenKeyBoard()
@@ -30,6 +33,7 @@ class Main(QWidget):
         self.keyboard.gif.connect(self.getgif)
         self.keyboard.esc.connect(self.doesc)
         self.keyboard.screen.connect(self.screen)
+        self.keyboard.record.connect(self.record)
 
         self.gif = GIF()
         self.isScreenCutBegin = False
@@ -68,6 +72,14 @@ class Main(QWidget):
     def changeifMessage(self):
         self.ifMessage = not self.ifMessage
         self.changeUDP.setText('显示通知:'+str(self.ifMessage))
+    
+    def record(self,temp):
+        if temp == "begin":
+            self.translation.start()
+        else:
+            # self.translation.stopRecord()
+            self.translation.stop()
+            self.translation.terminate()
 
     def doesc(self,temp):
         if temp:
@@ -140,6 +152,7 @@ class Main(QWidget):
         self.borderlist = []
 
     def getemit(self,temp):
+        print(temp)
         self.udp.sendInfo(bytes(temp[0]+"*-*"+temp[1],'utf-8'))
         self.screenInfo.showInfo(temp[1])
         if self.ifMessage:
