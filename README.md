@@ -4,6 +4,8 @@ python
 
 ### 主要用到的几个库
 
+pywin32
+
 keyboard
 
 pyqt5

@@ -1,9 +1,9 @@
 config = {
     'icon': {
-        'normal': './icon/icon_normal.png',
-        'bad': './icon/icon_bad.png'
+        'normal': 'E:\\workspace\\tools\\keyboardTools\\icon\\icon_normal.png',
+        'bad': 'E:\\workspace\\tools\\keyboardTools\\icon\\icon_bad.png'
     },
-    'ifMessage': False,
+    'ifMessage': True,
     'imgType': 'markdown',
     'Translation': {
         'enable': False,
