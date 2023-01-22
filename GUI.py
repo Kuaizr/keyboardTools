@@ -165,6 +165,8 @@ class Main(QWidget):
     def getemit(self,temp):
         if config['UDP']['enable']:
             self.udp.sendInfo(bytes(temp[0]+"*-*"+temp[1],'utf-8'))
+        if config['ScreenInfo']['enable']:
+            subprocess.run("xsetroot -name " + temp[1] ,shell=True)
         if self.ifMessage:
             self.showMessage(temp)
         if temp[0] == "success!":

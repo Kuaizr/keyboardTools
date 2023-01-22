@@ -10,7 +10,7 @@ config = {
         'modelType': 'base'
     },
     'ScreenInfo': {
-        'enable': False
+        'enable': True
     },
     'GIF': {
         'filepath': '/home/kzer/Pictures/screencut/'
