@@ -1,6 +1,6 @@
-import time
+from Utils.Config import config
+import time,os
 import subprocess
-import os
 from PyQt5.QtCore import *
  
 # 屏幕录制画面大小
@@ -14,7 +14,7 @@ class GIF(QThread):
         #ffmpeg 截屏
 
     def screencut(self,offset_x = 0, offset_y = 0, width = 1920, height = 1080):
-        filename = "/home/kzer/Pictures/screencut/" + str(int(time.time() * 1000))+".png"
+        filename = config['GIF']['filepath'] + str(int(time.time() * 1000))+".png"
         res = subprocess.call("ffmpeg -f x11grab -video_size "+ str(width) +"x"+ str(height) +" -i " + self.display + "+"+  str(offset_x) +","+ str(offset_y) +" -frames:v 1 -y " + filename, shell=True)
 
         if res:
@@ -25,7 +25,7 @@ class GIF(QThread):
         return filename
 
     def begingif(self,offset_x = 0, offset_y = 0, width = 1920, height = 1080, fps = 30, draw_mouse = 0):
-        filename = "/home/kzer/Pictures/screencut/" + str(int(time.time() * 1000))+".mp4"
+        filename = config['GIF']['filepath'] + str(int(time.time() * 1000))+".mp4"
         shell = "ffmpeg -video_size "+ str(width) +"x"+ str(height) +" -framerate 15 -f x11grab -i " + self.display + "+"+ str(offset_x) +","+ str(offset_y)+" -y "+filename
         print(shell)
         self.process = subprocess.Popen("ffmpeg -video_size "+ str(width) +"x"+ str(height) +" -framerate 15 -f x11grab -i " + self.display + "+"+ str(offset_x) +","+ str(offset_y)+" -y "+filename,shell=True, stdin=subprocess.PIPE)
@@ -44,15 +44,4 @@ class GIF(QThread):
         else:
             temp = ["success!",self.filename.replace("mp4","gif")]
         self.signal.emit(temp)
-
-if __name__ == "__main__":
-    gif1 = GIF()
-    # gif1.screencut()
-    gif1.begingif()
-    time.sleep(3)
-    gif1.endgif()
-    # time.sleep(10)
-
-    # gif1.begingif(offset_x = 100, offset_y = 100, width = 600, height = 600)
-    # time.sleep(10)
-    # gif1.endgif()
+        return temp[1]

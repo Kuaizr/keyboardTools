@@ -38,3 +38,5 @@ def getImgLableBybase64(path):
         pic=s.decode('ascii')
     return "<img src='data:image/png;base64,"+ pic +"'/>"
 
+def getImgLableToMarkdown(path):
+    return "![]\("+ path +"\)"

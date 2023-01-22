@@ -10,7 +10,6 @@ class ImgFloat(QWidget):
     transparent = False
     def __init__(self,x,y,w,h,imgpath):
         super().__init__()
-        print(imgpath)
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
         self.imgpath = imgpath
         self.x = x
@@ -92,6 +91,6 @@ class ImgFloat(QWidget):
 
 # if __name__ == '__main__':
 #     application=QApplication(sys.argv)#窗口通讯
-#     root=ImgFloat(100,100,400,400,'/home/kzer/code/keyboardTools/icon_bad.png')#创建对象
+#     root=ImgFloat(100,100,400,400)#创建对象
 #     root.show()#展示窗口
 #     sys.exit(application.exec_())
