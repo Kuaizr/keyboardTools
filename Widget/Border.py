@@ -14,9 +14,6 @@ class Border(QWidget):
         self.show()
 
 
-
-
-
 # if __name__ == '__main__':
 #     res = [100,100,600,600]
 #     application=QApplication(sys.argv)#窗口通讯

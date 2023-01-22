@@ -115,11 +115,4 @@ class ScreenTemp(QWidget):
     
     def getPosition(self):
         return self.position
-        # self.signal.emit(self.position)
-# if __name__ == '__main__':
-#     application=QApplication(sys.argv)#窗口通讯
-#     root=ScreenTemp()#创建对象
-#     # root.resize(230,100)
-#     root.show()#展示窗口
-#     sys.exit(application.exec_())
 

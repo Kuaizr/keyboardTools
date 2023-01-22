@@ -2,8 +2,6 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
-import sys,time
-
 class ScreenInfo(QWidget):
 
     def __init__(self):
@@ -19,7 +17,6 @@ class ScreenInfo(QWidget):
         self.setGeometry(0,self.desktop.height() * 0.85,self.desktop.width(),self.desktop.height() * 0.1)
         self.setMouseTracking(True)
         
-
         self.info = QLabel(self)
         self.info.setGeometry(0,0,self.desktop.width(),self.desktop.height() * 0.1)
         self.info.setAlignment(Qt.AlignCenter)
@@ -35,16 +32,3 @@ class ScreenInfo(QWidget):
     
     def hideInfo(self):
         self.info.setText("")
-        # self.hide()
-
-
-    
-# if __name__ == '__main__':
-#     application=QApplication(sys.argv)#窗口通讯
-#     root=ScreenInfo()#创建对象
-#     root.showInfo("花儿与少年")#展示窗口
-#     root.showInfo("玫瑰与少女")#展示窗口
-#     # time.sleep(2)
-#     # root.showInfo("军训")#展示窗口
-#     sys.exit(application.exec_())
-

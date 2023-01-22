@@ -1,7 +1,7 @@
 import time
-from clipboard import get_clipboard
+from Utils.clipboard import get_clipboard
 import keyboard
-from youdao import youdao
+from Utils.youdao import youdao
 from PyQt5.QtCore import *
 
 
@@ -34,7 +34,6 @@ class ListenKeyBoard(QThread):
         keyboard.wait()
     
     def recordfunc(self):
-        print(1)
         if self.hasRecord == False:
             self.hasRecord = True
             self.record.emit("begin")

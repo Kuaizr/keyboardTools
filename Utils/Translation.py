@@ -1,4 +1,5 @@
 import sys
+from Utils.Config import config
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -12,7 +13,7 @@ torch.hub._validate_not_a_forked_repo = lambda a, b, c: True
 
 class Translation(QThread):
     text = pyqtSignal(list)
-    def __init__(self,modelType = 'base', recordType = 0, gap = 8000):
+    def __init__(self, recordType = 0, gap = 8000):
         super(Translation,self).__init__()
 
          # 创建队列用于存储录音数据
@@ -44,19 +45,20 @@ class Translation(QThread):
 
         # 加载whisper模型和语音定位模型
         self.cc = opencc.OpenCC('t2s')
-        self.model = whisper.load_model(modelType)
+        self.model = whisper.load_model(config["Translation"]["modelType"])
         self.options = whisper.DecodingOptions(language='zh')
 
         self.vad_model, funcs = torch.hub.load(
                     repo_or_dir="snakers4/silero-vad", model="silero_vad", trust_repo=True
                 )
         self.detect_speech = funcs[0]
+
+        self.stop()
+        self.terminate()
     
     def run(self):
         self.record()
-        # while True:
-        #     pass
-    
+
     def detect_voice_activity(self,audio):
             speeches = self.detect_speech(audio, self.vad_model, sampling_rate=16000)
             if len(speeches) == 2:
@@ -68,8 +70,9 @@ class Translation(QThread):
         audio = whisper.pad_or_trim(audio_data)
         mel = whisper.log_mel_spectrogram(audio).to(self.model.device)
         result = whisper.decode(self.model, mel, self.options)
-        self.text.emit(["success!",self.cc.convert(result.text)])
-        # print(self.cc.convert(result.text))
+        text = self.cc.convert(result.text)
+        self.text.emit(["success!",text])
+        print(text)
 
     def recording_callback(self,in_data, frame_count, time_info, status):
         # 将录制的数据存入队列
@@ -123,10 +126,3 @@ class Translation(QThread):
     def stop(self):     #重写stop方法
         self.stream.stop_stream()
         self.isRecord = False
-        
-        
-# if __name__ == "__main__":
-#     application=QApplication(sys.argv)#窗口通讯
-#     a = Translation(gap=4000)
-#     a.start()
-#     sys.exit(application.exec_())

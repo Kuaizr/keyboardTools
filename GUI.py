@@ -2,17 +2,19 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+import subprocess
 
-from clipboard import set_clipboard, getImgLableBybase64
+from Utils.clipboard import set_clipboard, getImgLableBybase64, getImgLableToMarkdown
 
-from ListenKeyBoard import ListenKeyBoard
-from GIF import GIF
-from ScreenTemp import ScreenTemp
-from Border import Border
-from UDP import UDP
-from ImgFloat import ImgFloat
-from ScreenInfo import ScreenInfo
-from Translation import Translation
+from Utils.ListenKeyBoard import ListenKeyBoard
+from Utils.GIF import GIF
+from Widget.ScreenTemp import ScreenTemp
+from Widget.Border import Border
+from Utils.UDP import UDP
+from Widget.ImgFloat import ImgFloat
+from Widget.ScreenInfo import ScreenInfo
+from Utils.Translation import Translation
+from Utils.Config import config
  
 class Main(QWidget):
     def __init__(self):
@@ -20,13 +22,19 @@ class Main(QWidget):
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
-        self.screenInfo = ScreenInfo()
-        self.translation = Translation()
-        self.translation.text.connect(self.getemit)
+        # 初始化配置文件
+        if config['ScreenInfo']['enable']:
+            self.screenInfo = ScreenInfo()
+        
+        if config['Translation']['enable']:
+            self.translation = Translation()
+            self.translation.text.connect(self.getemit)
+        if config['UDP']['enable']:
+            self.udp = UDP()
+            self.udp.signal.connect(self.showMessage)
 
-        self.udp = UDP()
-        self.ifMessage = False
-        self.imgbase64 = False
+        self.ifMessage = config['ifMessage']
+        self.imgType = config['imgType']
 
         self.keyboard = ListenKeyBoard()
         self.keyboard.signal.connect(self.getemit)
@@ -43,43 +51,65 @@ class Main(QWidget):
 
         self.imgList = dict()
 
-        self.sysIcon = QIcon('./icon_normal.png')
-        self.badIcon = QIcon('./icon_bad.png')
+        self.sysIcon = QIcon(config['icon']['normal'])
+        self.badIcon = QIcon(config['icon']['bad'])
         self.setWindowIcon(self.sysIcon)
         self.createTrayIcon()
 
         self.keyboard.start()
 
     def createTrayIcon(self):
-        self.changeImgType = QAction('图片内嵌:'+str(self.imgbase64), self, triggered = self.changeImgbase64)
-        self.changeUDP = QAction('显示通知:'+str(self.ifMessage), self, triggered = self.changeifMessage)
+        self.ImgTypeButton = QAction('图片格式:'+str(self.imgType), self, triggered = self.changeImgType)
+        self.MessageButton = QAction('显示通知:'+str(self.ifMessage), self, triggered = self.changeifMessage)
         aQuit = QAction('退出(&Q)', self, triggered = QApplication.instance().quit)
         
         menu = QMenu(self)
-        menu.addAction(self.changeImgType)
-        menu.addAction(self.changeUDP)
+        if config['UDP']['enable']:
+            self.ClientButton = QAction('更改UDP客户端地址:', self, triggered = self.changeClient)
+            menu.addAction(self.ClientButton)
+        menu.addAction(self.ImgTypeButton)
+        menu.addAction(self.MessageButton)
         menu.addAction(aQuit)
         
         self.trayIcon = QSystemTrayIcon(self)
         self.trayIcon.setIcon(self.sysIcon)
         self.trayIcon.setContextMenu(menu)
         self.trayIcon.show()
+    
+    def changeClient(self):
+        ipinfo,ok = QInputDialog.getText(self,"客户端地址","输入ipv4:port",text=config["UDP"]["Client"]["ipv4"]+":"+str(config["UDP"]["Client"]["port"]))
+        ipv4 = config["UDP"]["Client"]["ipv4"]
+        port = str(config["UDP"]["Client"]["port"])
+        if ok and ipinfo:
+            #验证地址合法性
+            iptemp = ipinfo.split(':')
+            if len(iptemp) == 2:
+                ipv4 = iptemp[0]
+                port = iptemp[1]
+                self.udp.changeClient(ipv4,port)
+            else:
+                self.showMessage(["Failed!","客户端地址格式有问题，请修改"])
 
-    def changeImgbase64(self):
-        self.imgbase64 = not self.imgbase64
-        self.changeImgType.setText('图片内嵌:'+str(self.imgbase64))
+    def changeImgType(self):
+        if self.imgType == "path":
+            self.imgType = "markdown"
+        elif self.imgType == "markdown":
+            self.imgType = "base64"
+        elif self.imgType == "base64":
+            self.imgType = "path"
+        self.ImgTypeButton.setText('图片格式:'+str(self.imgType))
     
     def changeifMessage(self):
         self.ifMessage = not self.ifMessage
-        self.changeUDP.setText('显示通知:'+str(self.ifMessage))
+        self.MessageButton.setText('显示通知:'+str(self.ifMessage))
     
     def record(self,temp):
-        if temp == "begin":
-            self.translation.start()
-        else:
-            # self.translation.stopRecord()
-            self.translation.stop()
-            self.translation.terminate()
+        if config['Translation']['enable']:
+            if temp == "begin":
+                self.translation.start()
+            else:
+                self.translation.stop()
+                self.translation.terminate()
 
     def doesc(self,temp):
         if temp:
@@ -87,8 +117,14 @@ class Main(QWidget):
                 self.screenTemp.close()
                 self.isScreenCutBegin = False
                 self.isGifBegin = False
-                self.gif.endgif()
                 ## 删除所有痕迹
+                self.closeBorder()
+                delpath = self.gif.endgif()
+                delpathres = subprocess.call("del "+ delpath, shell=True)
+                print(delpathres)
+                if delpathres == 0:
+                    print('停止录制')
+
             elif self.screenTemp and self.isScreenCutBegin and self.isGifBegin == False:
                 self.screenTemp.close()
                 self.isScreenCutBegin = False
@@ -152,34 +188,40 @@ class Main(QWidget):
         self.borderlist = []
 
     def getemit(self,temp):
-        print(temp)
-        self.udp.sendInfo(bytes(temp[0]+"*-*"+temp[1],'utf-8'))
-        self.screenInfo.showInfo(temp[1])
+        if config['UDP']['enable']:
+            self.udp.sendInfo(bytes(temp[0]+"*-*"+temp[1],'utf-8'))
+        if config['ScreenInfo']['enable']:
+            self.screenInfo.showInfo(temp[1])
         if self.ifMessage:
-            self.showMessage(temp[0],temp[1])
+            self.showMessage(temp)
         if temp[0] == "success!":
-            if self.imgbase64:
-                res = getImgLableBybase64(temp[1])
-                set_clipboard(res)
+            if temp[1][-3:] == "gif" or temp[1][-3:] == "png":
+                if self.imgType == "path":
+                    set_clipboard(temp[1])
+                elif self.imgType == "markdown":
+                    set_clipboard(getImgLableToMarkdown(temp[1]))
+                elif self.imgType == "base64":
+                    set_clipboard(getImgLableBybase64(temp[1]))
             else:
                 set_clipboard(temp[1])
 
-    def showMessage(self,title,info):
+    def showMessage(self,temp):
+        title = temp[0]
+        info = temp[1]
         icon = self.sysIcon
         if title != "success!":            #根据消息类型获取图标
             icon = self.badIcon
         self.trayIcon.showMessage(title,    #标题
                                   info,     #信息
                                   icon,     #图标
-                                  2000)     #信息显示持续时间
+                                  3000)     #信息显示持续时间
 
 if __name__ == '__main__':
     application=QApplication(sys.argv)#窗口通讯
     if not QSystemTrayIcon.isSystemTrayAvailable():
-        QMessageBox.critical(None, '系统托盘', '本系统不支持托盘功能,请注释掉self.createTrayIcon()和self.showMessage(title,info),并解开其他注释')
+        QMessageBox.critical(None, '系统托盘', '本系统不支持托盘功能,请注释掉self.createTrayIcon()和self.showMessage([title,info]),并解开其他注释')
         sys.exit(1)
         
     QApplication.setQuitOnLastWindowClosed(False)
     root=Main()#创建对象
-    # root.show()#展示窗口
     sys.exit(application.exec_())

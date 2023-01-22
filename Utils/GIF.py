@@ -1,4 +1,4 @@
-# import ffmpeg
+from Utils.Config import config
 import time
 import subprocess
 from PyQt5.QtCore import *
@@ -13,7 +13,7 @@ class GIF(QThread):
         #ffmpeg 截屏
 
     def screencut(self,offset_x = 0, offset_y = 0, width = 1920, height = 1080):
-        filename = "E:\\15973\\Pictures\\keyboardtools\\" + str(int(time.time() * 1000))+".png"
+        filename = config['GIF']['filepath'] + str(int(time.time() * 1000))+".png"
         res = subprocess.call("ffmpeg -f gdigrab -s "+ str(width) +"x"+ str(height) +" -offset_x "+ str(offset_x) +" -offset_y "+ str(offset_y) +" -i desktop -frames:v 1 -draw_mouse 1 " + filename, shell=True)
         if res:
             temp = ["failed!","截图失败"]
@@ -23,7 +23,7 @@ class GIF(QThread):
         return temp[1]
 
     def begingif(self,offset_x = 0, offset_y = 0, width = 1920, height = 1080, fps = 15, draw_mouse = 0):
-        filename = "E:\\15973\\Pictures\\keyboardtools\\" + str(int(time.time() * 1000))+".mp4"
+        filename = config['GIF']['filepath'] + str(int(time.time() * 1000))+".mp4"
         self.process = subprocess.Popen("ffmpeg -f gdigrab -s "+ str(width) +"x"+ str(height) +" -offset_x "+ str(offset_x) +" -offset_y "+ str(offset_y) +" -i desktop -draw_mouse 1 -framerate 15 " + filename,shell=True, stdin=subprocess.PIPE)
         self.filename = filename
         self.width = width

@@ -8,6 +8,10 @@ keyboard
 
 pyqt5
 
+socket
+
+request
+
 ffmpeg(系统环境内部的)
 
 ### 用处
@@ -39,3 +43,7 @@ torch
 numpy
 
 等等
+
+### 1月22号更新
+
+重构了整个代码文件，添加了UDP的客户端修改操作界面，添加了Config.py对整个系统做启动配置
