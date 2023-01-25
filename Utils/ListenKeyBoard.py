@@ -25,6 +25,7 @@ class ListenKeyBoard(QThread):
         
     def run(self):
         keyboard.add_hotkey('ctrl+c', self.timimg,suppress = False)
+        keyboard.add_hotkey('ctrl+shift+c', self.timimg,suppress = False)
         keyboard.add_hotkey('ctrl+shift+[', self.gifbegin,suppress = False)
         keyboard.add_hotkey('ctrl+shift+]', self.gifend,suppress = False)
         keyboard.add_hotkey('ctrl+shift+a', self.screencut,suppress = False)
