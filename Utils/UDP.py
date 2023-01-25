@@ -32,4 +32,4 @@ class UDP(QThread):
             self.signal.emit(["failed!","客户端地址格式有问题，请修改"])
 
     def changeClient(self,ipv4,port):
-        self.clientAddress = (ipv4, int(port))git commit -m "换了UDP获取本地ipv4的方法,并且换了图标,"
+        self.clientAddress = (ipv4, int(port))
