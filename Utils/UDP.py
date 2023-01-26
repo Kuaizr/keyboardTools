@@ -2,13 +2,26 @@ import socket
 from PyQt5.QtCore import *
 from Utils.Config import config
 
+def get_host_ip():
+     """
+     查询本机ip地址
+     :return: ip
+     """
+     try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+     finally:
+        s.close()
+     return ip
+
 class UDP(QThread):
     signal = pyqtSignal(list)
     def __init__(self) -> None:
         super(UDP,self).__init__()
         self.serverPort=config['UDP']['port']
         self.serverSocket=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-        self.ipv4 = socket.gethostbyname(socket.gethostname())
+        self.ipv4 = get_host_ip()
         self.serverSocket.bind((str(self.ipv4),self.serverPort))
         self.clientAddress = (config['UDP']['Client']['ipv4'], config['UDP']['Client']['port'])
         

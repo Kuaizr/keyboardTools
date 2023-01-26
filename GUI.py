@@ -13,7 +13,6 @@ from Widget.Border import Border
 from Utils.UDP import UDP
 from Widget.ImgFloat import ImgFloat
 from Widget.ScreenInfo import ScreenInfo
-from Utils.Translation import Translation
 from Utils.Config import config
  
 class Main(QWidget):
@@ -27,6 +26,7 @@ class Main(QWidget):
             self.screenInfo = ScreenInfo()
         
         if config['Translation']['enable']:
+            from Utils.Translation import Translation
             self.translation = Translation()
             self.translation.text.connect(self.getemit)
         if config['UDP']['enable']:
