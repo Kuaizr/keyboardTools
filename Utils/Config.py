@@ -1,7 +1,7 @@
 config = {
     'icon': {
-        'normal': 'E:\\workspace\\tools\\keyboardTools\\icon\\icon_normal.png',
-        'bad': 'E:\\workspace\\tools\\keyboardTools\\icon\\icon_bad.png'
+        'normal': 'E:\\workspace\\Code\\keyboardTools\\icon\\icon_normal.png',
+        'bad': 'E:\\workspace\\Code\\keyboardTools\\icon\\icon_bad.png'
     },
     'ifMessage': True,
     'imgType': 'markdown',

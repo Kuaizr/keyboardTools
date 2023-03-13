@@ -18,6 +18,8 @@ class ScreenTemp(QWidget):
         self.x = 0
         self.y = 0
         self.endx = self.desktop.width()
+        if(self.endx > 1920):
+            self.endx = self.endx - 1920
         self.endy = self.desktop.height()
         self.tempx = 0
         self.tempy = 0

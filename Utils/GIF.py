@@ -14,6 +14,7 @@ class GIF(QThread):
 
     def screencut(self,offset_x = 0, offset_y = 0, width = 1920, height = 1080):
         filename = config['GIF']['filepath'] + str(int(time.time() * 1000))+".png"
+        print(width,height,offset_x,offset_y)
         res = subprocess.call("ffmpeg -f gdigrab -s "+ str(width) +"x"+ str(height) +" -offset_x "+ str(offset_x) +" -offset_y "+ str(offset_y) +" -i desktop -frames:v 1 -draw_mouse 1 " + filename, shell=True)
         if res:
             temp = ["failed!","截图失败"]
